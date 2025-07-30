@@ -42,5 +42,5 @@
   "devDependencies": {
     "nodemon": "^3.1.10"
   },
-  "proxy": "http://localhost:5000"
+  "proxy": "https://movie-recommendation-app-h5pp.onrender.com"
 }
