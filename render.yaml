@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: movie-recommendation-backend
+    env: node
+    buildCommand: cd server && npm install
+    startCommand: cd server && node server.js
+    envVars:
+      - key: MONGO_URI
+        value: "mongodb+srv://MovieAppUser:test1234@cluster0.ujvsgkg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+      - key: JWT_SECRET
+        value: "Husseinialka10"
+      - key: TMDB_API_KEY
+        value: "1f262de02d07fcbb28bf9d658971a34b"
+      - key: NODE_ENV
+        value: production
+
+  - type: web
+    name: movie-recommendation-frontend
+    env: static
+    buildCommand: cd client && npm install && npm run build
+    staticPublishPath: client/build
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

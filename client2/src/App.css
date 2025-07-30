@@ -1,0 +1,41 @@
+/* src/App.css */
+.App {
+  text-align: center;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  max-width: 800px; /* Limits the width of the main content */
+  margin: 0 auto; /* Centers the main content */
+  display: flex; /* Use flexbox for layout */
+  flex-direction: column; /* Stack items vertically */
+  min-height: 100vh; /* Make sure it takes full viewport height */
+  box-sizing: border-box; /* Include padding in height calculation */
+}
+
+h1 {
+  color: #333;
+  margin-bottom: 5px;
+}
+
+p {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #666;
+}
+
+.chat-window {
+  flex-grow: 1; /* Allows chat window to take available space */
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 15px;
+  background-color: #fff;
+  overflow-y: auto; /* Enable scrolling for messages */
+  display: flex;
+  flex-direction: column; /* Messages stack top-to-bottom */
+  justify-content: flex-end; /* Sticks new messages to the bottom */
+  min-height: 400px; /* Minimum height for the chat area */
+  margin-bottom: 20px;
+}
+
+h3 p {
+  color: red;
+}

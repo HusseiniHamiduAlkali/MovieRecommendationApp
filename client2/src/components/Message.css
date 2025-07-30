@@ -1,0 +1,32 @@
+.message-contaniner {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.message-content {
+    padding: 10px 15px;
+    border-radius: 20px;
+    max-width: 70%;
+    word-wrap: break-word; /* Ensures lomg words wrap */
+}
+
+.user-message {
+    justify-content: flex-end;
+    margin-left: auto;
+}
+
+.user-message .message-content{
+    background-color: #dcf8c6; /*light green*/
+    color: #333;
+
+}
+
+.ai-messsage {
+    justify-content: flex-start; /* Align AI messages to the left*/
+    margin-right : auto;
+}
+
+.ai-messsage .message-content {
+    background-color: #e0e0e0; /* light gray for AI*/
+    color: #333;
+}
