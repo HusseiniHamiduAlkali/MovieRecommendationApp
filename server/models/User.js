@@ -13,12 +13,30 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    // Array to store favorite movies
     favoriteMovies: [
         {
             type: Number,
             unique: true
         }
     ],
+    // Array to store movies in watchlist
+    watchlist: [
+        {
+            type: Number,
+            unique: true
+        }
+    ],
+    // Store user preferences for personalized recommendations
+    preferences: {
+        genres: [{ type: Number }],
+        minRating: { type: Number, default: 0 },
+        releaseYearRange: {
+            start: { type: Number },
+            end: { type: Number }
+        },
+        watchedMovies: [{ type: Number }]
+    },
     createdAt: {
         type: Date,
         default: Date.now

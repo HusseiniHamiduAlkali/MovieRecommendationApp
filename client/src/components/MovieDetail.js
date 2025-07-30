@@ -3,12 +3,27 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
+/**
+ * MovieDetail Component
+ * Displays detailed information about a specific movie
+ * Features:
+ * - Movie information display
+ * - Add/remove from favorites
+ * - Add/remove from watchlist
+ * - Mark as watched
+ * - Show similar movies
+ * - Show personalized recommendations
+ */
 const MovieDetail = () => {
     const { id } = useParams();
     const [movie, setMovie] = useState(null);
+    const [similarMovies, setSimilarMovies] = useState([]);
+    const [recommendations, setRecommendations] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [isFavorited, setIsFavorited] = useState(false); // NEW: State to track if movie is favorited
+    const [isFavorited, setIsFavorited] = useState(false);
+    const [isInWatchlist, setIsInWatchlist] = useState(false);
+    const [isWatched, setIsWatched] = useState(false);
 
     // Function to check if user is authenticated (simple check for now)
     const isAuthenticated = () => {
@@ -16,43 +31,79 @@ const MovieDetail = () => {
     };
 
     useEffect(() => {
-        const fetchMovieDetail = async () => {
+        const fetchData = async () => {
             setLoading(true);
             setError(null);
             try {
-                const response = await axios.get(`/api/movies/${id}`);
-                setMovie(response.data);
-                setLoading(false);
+                // Fetch movie details, similar movies, and check user status
+                const [movieResponse, similarResponse, userStatusResponse, recommendationsResponse] = await Promise.all([
+                    axios.get(`/api/movies/${id}`),
+                    axios.get(`/api/movies/${id}/similar`),
+                    isAuthenticated() ? axios.get('/api/users/status/' + id) : null,
+                    isAuthenticated() ? axios.get('/api/movies/recommendations') : null
+                ]);
 
-                // NEW: After fetching movie details, check if it's already a favorite
-                if (isAuthenticated()) {
-                    const token = localStorage.getItem('token');
-                    try {
-                        const favoritesResponse = await axios.get('/api/users/favorites', {
-                            headers: {
-                                'x-auth-token': token
-                            }
-                        });
-                        // Check if the current movie ID is in the user's favorites list
-                        setIsFavorited(favoritesResponse.data.includes(parseInt(id)));
-                    } catch (favErr) {
-                        console.error('Error fetching favorites:', favErr);
-                        // Handle error, e.g., token expired, or server error
-                        // For simplicity, we just won't show it as favorited
-                    }
+                setMovie(movieResponse.data);
+                setSimilarMovies(similarResponse.data.results.slice(0, 6));
+                
+                if (userStatusResponse) {
+                    const { isFavorite, inWatchlist, watched } = userStatusResponse.data;
+                    setIsFavorited(isFavorite);
+                    setIsInWatchlist(inWatchlist);
+                    setIsWatched(watched);
                 }
 
+                if (recommendationsResponse) {
+                    setRecommendations(recommendationsResponse.data.results.slice(0, 6));
+                }
+                
+                setLoading(false);
+
             } catch (err) {
-                console.error(`Error fetching movie details for ID ${id}:`, err);
-                setError('Failed to load movie details. Please try again later.');
+                setError('Error fetching movie details');
                 setLoading(false);
             }
         };
+        fetchData();
+    }, [id]);
 
-        if (id) {
-            fetchMovieDetail();
+    // Handle adding/removing from watchlist
+    const handleWatchlistClick = async () => {
+        if (!isAuthenticated()) {
+            setError('Please log in to use watchlist');
+            return;
         }
-    }, [id]); // Re-run effect if the ID in the URL changes
+
+        try {
+            if (isInWatchlist) {
+                await axios.delete(`/api/users/watchlist/${id}`);
+            } else {
+                await axios.post('/api/users/watchlist', { movieId: parseInt(id) });
+            }
+            setIsInWatchlist(!isInWatchlist);
+        } catch (err) {
+            setError('Failed to update watchlist');
+        }
+    };
+
+    // Handle marking movie as watched
+    const handleMarkAsWatched = async () => {
+        if (!isAuthenticated()) {
+            setError('Please log in to mark movies as watched');
+            return;
+        }
+
+        try {
+            await axios.post('/api/users/watched', { movieId: parseInt(id) });
+            setIsWatched(true);
+            // Remove from watchlist if it's there
+            if (isInWatchlist) {
+                await handleWatchlistClick();
+            }
+        } catch (err) {
+            setError('Failed to mark movie as watched');
+        }
+    };
 
     // NEW: Function to handle adding/removing from favorites
     const handleFavoriteToggle = async () => {

@@ -6,7 +6,10 @@ import Register from './components/Register';
 import Login from './components/Login';
 import ProtectedRoute from './components/ProtectedRoute';
 import Dashboard from './components/Dashboard';
-import MovieDetail from './components/MovieDetail'; // NEW: Import MovieDetail component
+import MovieDetail from './components/MovieDetail';
+import WatchList from './components/WatchList';
+import UserPreferences from './components/UserPreferences';
+import MovieFilters from './components/MovieFilters';
 
 import './App.css';
 import logo from './logo.svg';

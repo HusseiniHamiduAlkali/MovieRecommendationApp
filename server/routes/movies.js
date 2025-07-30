@@ -1,7 +1,18 @@
 // server/routes/movies.js
+/**
+ * Movies Router
+ * Handles all movie-related routes including:
+ * - Popular movies
+ * - Movie details
+ * - Movie search
+ * - Advanced filtering
+ * - Personalized recommendations
+ */
+
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
+const auth = require('../middleware/auth'); // Import auth middleware
 
 // Load environment variables (ensure this is at the top if not already)
 require('dotenv').config();
